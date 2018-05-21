@@ -17,6 +17,7 @@ import time
 start = time.perf_counter()
 
 import cv2
+#capture cctv open link
 cap = cv2.VideoCapture('http://114.110.17.6:8896/image.jpg?type=motion&camera=1')
 
 # This is needed since the notebook is stored in the object_detection folder.
@@ -60,7 +61,7 @@ NUM_CLASSES = 90
 # ## Download Model
 
 # In[5]:
-
+# if you have ever run this program, it will download the model file, you can comment this code for 2nd run
 # opener = urllib.request.URLopener()
 # opener.retrieve(DOWNLOAD_BASE + MODEL_FILE, MODEL_FILE)
 # tar_file = tarfile.open(MODEL_FILE)
@@ -161,10 +162,11 @@ with detection_graph.as_default():
       data = {}  
       data['vessel'] = []
       s_class = classes[scores > 0.5]
-      print(str(len(s_class))+ ' object')
+      # print(str(len(s_class))+ ' object')
       # for i in range(len(s_class)): print(category_index.get(s_class[i])['name'])
       if(len(s_class)!=0 and s_class[0] == 3):
         cv2.putText(image_np,"Detected Car: " + str(len(s_class)), (10, 35), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0,0,255),2,cv2.FONT_HERSHEY_SIMPLEX)
+        # save output to json
         data['vessel'].append({  
           'id': 3,
           'object': 'car',
@@ -177,9 +179,7 @@ with detection_graph.as_default():
         cv2.putText(image_np,"Detected Person: " + str(len(s_class)), (10, 35), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0,0,255),2,cv2.FONT_HERSHEY_SIMPLEX)
       else:
         cv2.putText(image_np,"Detected Object: " + str(len(s_class)), (10, 35), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0,0,255),2,cv2.FONT_HERSHEY_SIMPLEX)
-
-      
-        
+         
       
       cv2.imshow('object detection', cv2.resize(image_np, (800,600)))
       if cv2.waitKey(25) & 0xFF == ord('q'):

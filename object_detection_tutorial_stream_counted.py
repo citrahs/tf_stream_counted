@@ -10,12 +10,12 @@ from services import CCTVService
 
 def detection_histogram(scores, classes, category_index):
     i = 0
-    result = {}
+    result = {"person":0, "bicycle":0, "car":0, "motorcycle":0, "bus":0, "train":0, "truck":0}
     while(scores[i]>0.4 and i < scores.size):
         try:
             result[ category_index[classes[i]]["name"] ] = result[ category_index[classes[i]]["name"] ] + 1
         except KeyError:
-            result[ category_index[classes[i]]["name"] ] = 1
+            pass
         i = i + 1
     return result
 
@@ -52,7 +52,7 @@ def main():
     label_map = label_map_util.load_labelmap(PATH_TO_LABELS)
     categories = label_map_util.convert_label_map_to_categories(label_map, max_num_classes=NUM_CLASSES, use_display_name=True)
     category_index = label_map_util.create_category_index(categories)
-
+    print(category_index)
     cap = cv2.VideoCapture(sys.argv[1])
 
     with detection_graph.as_default():
@@ -77,7 +77,8 @@ def main():
                     np.squeeze(scores),
                     category_index,
                     use_normalized_coordinates=True,
-                    line_thickness=2)
+                    line_thickness=2,
+                    min_score_thresh=.4)
                 data = detection_histogram(np.squeeze(scores), np.squeeze(classes).astype(np.int32), category_index)
                 service.data = data
                 _, jpeg_bytes_tmp = cv2.imencode('.jpg', image_np) # to jpeg

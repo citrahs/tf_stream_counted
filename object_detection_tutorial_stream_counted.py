@@ -18,9 +18,10 @@ def main():
     server.start()
 
     PATH_TO_MODELS = os.path.join("..","models")
-    #PATH_TO_MODELS = os.path.join("..", "..")
     sys.path.append(os.path.join(sys.path[0], PATH_TO_MODELS, "research"))
     sys.path.append(os.path.join(sys.path[0], PATH_TO_MODELS, "research", "object_detection"))
+    print(sys.path)
+    
     from utils import label_map_util
     from utils import visualization_utils as vis_util
 

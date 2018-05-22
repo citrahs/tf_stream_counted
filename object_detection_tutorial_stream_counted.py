@@ -8,6 +8,17 @@ import cv2
 
 from services import CCTVService
 
+def detection_histogram(scores, classes, category_index):
+    i = 0
+    result = {"person":0, "bicycle":0, "car":0, "motorcycle":0, "bus":0, "train":0, "truck":0}
+    while(scores[i]>0.4 and i < scores.size):
+        try:
+            result[ category_index[classes[i]]["name"] ] = result[ category_index[classes[i]]["name"] ] + 1
+        except KeyError:
+            pass
+        i = i + 1
+    return result
+
 def main():
     # Start Web Service
     cond = threading.Condition()
@@ -20,7 +31,6 @@ def main():
     PATH_TO_MODELS = os.path.join("..","models")
     sys.path.append(os.path.join(sys.path[0], PATH_TO_MODELS, "research"))
     sys.path.append(os.path.join(sys.path[0], PATH_TO_MODELS, "research", "object_detection"))
-    print(sys.path)
     
     from utils import label_map_util
     from utils import visualization_utils as vis_util
@@ -41,7 +51,6 @@ def main():
     label_map = label_map_util.load_labelmap(PATH_TO_LABELS)
     categories = label_map_util.convert_label_map_to_categories(label_map, max_num_classes=NUM_CLASSES, use_display_name=True)
     category_index = label_map_util.create_category_index(categories)
-
     cap = cv2.VideoCapture(sys.argv[1])
 
     with detection_graph.as_default():
@@ -66,28 +75,10 @@ def main():
                     np.squeeze(scores),
                     category_index,
                     use_normalized_coordinates=True,
-                    line_thickness=2)
-                # yang ini buat count objectnya
-                # 1: person, 2: bicycle, 3: car, 4: motorcycle, 6: bus, 8: truck
-                data = {}  
-                data['vessel'] = []
-                s_class = classes[scores > 0.5]
-                # print(str(len(s_class))+ ' object')
-                # for i in range(len(s_class)): print(category_index.get(s_class[i])['name'])
-                if(len(s_class)!=0 and s_class[0] == 3):
-                    cv2.putText(image_np,"Detected Car: " + str(len(s_class)), (10, 35), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0,0,255),2,cv2.FONT_HERSHEY_SIMPLEX)
-                    # save output to json
-                    data['vessel'].append({  
-                        'id': 3,
-                        'object': 'car',
-                        'sum': str(len(s_class))
-                    })
-                elif(len(s_class)!=0 and s_class[0] == 1):
-                    cv2.putText(image_np,"Detected Person: " + str(len(s_class)), (10, 35), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0,0,255),2,cv2.FONT_HERSHEY_SIMPLEX)
-                else:
-                    cv2.putText(image_np,"Detected Object: " + str(len(s_class)), (10, 35), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0,0,255),2,cv2.FONT_HERSHEY_SIMPLEX)
-                cv2.resize(image_np, (800,600))
-                service.data = data
+                    line_thickness=2,
+                    min_score_thresh=.4)
+                data = detection_histogram(np.squeeze(scores), np.squeeze(classes).astype(np.int32), category_index)
+                service.data = {"streamInfo":{"OBJECTID":"","name":"", "address":"", "ip_source":"", "ip_detection":"", "lon":0.0, "lat":0.0}, "data":data}
                 _, jpeg_bytes_tmp = cv2.imencode('.jpg', image_np) # to jpeg
                 service.jpeg_bytes = jpeg_bytes_tmp.tobytes()
                 

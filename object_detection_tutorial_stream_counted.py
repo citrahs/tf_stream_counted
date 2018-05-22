@@ -12,6 +12,8 @@ def main():
     # Start Web Service
     cond = threading.Condition()
     service = CCTVService(cond, b'', {})
+    cherrypy.server.socket_host = sys.argv[2]
+    cherrypy.server.socket_port = int(sys.argv[3])
     server = threading.Thread(target=cherrypy.quickstart, args=[service])
     server.start()
 
@@ -39,7 +41,7 @@ def main():
     categories = label_map_util.convert_label_map_to_categories(label_map, max_num_classes=NUM_CLASSES, use_display_name=True)
     category_index = label_map_util.create_category_index(categories)
 
-    cap = cv2.VideoCapture('http://114.110.17.6:8896/image.jpg?type=motion&camera=1')
+    cap = cv2.VideoCapture(sys.argv[1])
 
     with detection_graph.as_default():
         with tf.Session(graph=detection_graph) as sess:
@@ -93,4 +95,10 @@ def main():
                 cond.release()
 
 if __name__ == "__main__":
+    if len(sys.argv) < 4:
+        print("Usage:\r\n  python object_detection_tutorial_stream_counted.py <NETWORK_CCTV_ADDRESS> <bind_address> <bind_port>")
+        sys.exit(1) 
     main()
+   #param 1 camera cctv address 'http://114.110.17.6:8896/image.jpg?type=motion&camera=1'
+   #param 2 bind address
+   #param 3 bind port

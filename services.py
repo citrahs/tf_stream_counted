@@ -39,8 +39,8 @@ class CCTVService(object):
                 yield "\r\n\r\n".encode('UTF-8')
                 self.cond.acquire()
                 self.cond.wait()
-                self.cond.release()
                 yield self.jpeg_bytes
+                self.cond.release()
                 yield boundaryPlus.encode('UTF-8')
         return mjpeg()
         

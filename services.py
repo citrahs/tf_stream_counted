@@ -20,26 +20,28 @@ class CCTVService(object):
         
     def stream(self):
         """ Object detection mjpeg streaming services """
+        boundary = "hehehe"
+        
+        cherrypy.response.headers['Content-Type'] = 'multipart/x-mixed-replace;boundary='+boundary
+        cherrypy.response.headers['connection'] = 'Keep-Alive'
+        cherrypy.response.headers['keep-alive'] = 'Timeout=60000'
+        boundaryPlus = "--"+boundary
+        contentTypeString = "\r\nContent-Type: image/jpeg\r\n"
+        
         def mjpeg():
             """ Mjpeg stream generator. Will wait for incoming new data
                 from the main program.
             """
-            boundary = "hehehe"
-            contentLengthString = "\r\nContent-Type: image/jpeg\r\n"
-            cherrypy.response.headers['Content-Type'] = 'multipart/x-mixed-replace;boundary='+boundary
-            cherrypy.response.headers['Connection'] = 'Keep-Alive'
-            cherrypy.response.headers['Keep-Alive'] = 'Timeout=60000'
-            boundary = "--"+boundary
-            yield boundary.encode('UTF-8')
+            yield boundaryPlus.encode('UTF-8')
             while True:
+                yield contentTypeString.encode('UTF-8')
+                yield ("Content-Length: " + str(len(self.jpeg_bytes))).encode('UTF-8')
+                yield "\r\n\r\n".encode('UTF-8')
                 self.cond.acquire()
                 self.cond.wait()
                 self.cond.release()
-                yield contentLengthString.encode('UTF-8')
-                yield ("Content-Length: " + str(len(self.jpeg_bytes))).encode('UTF-8')
-                yield "\r\n\r\n".encode('UTF-8')
                 yield self.jpeg_bytes
-                yield boundary.encode('UTF-8')
+                yield boundaryPlus.encode('UTF-8')
         return mjpeg()
         
     index.exposed = True

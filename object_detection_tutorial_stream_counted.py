@@ -5,6 +5,7 @@ import sys
 import tarfile
 import tensorflow as tf
 import zipfile
+import cherrypy
 
 from collections import defaultdict
 from io import StringIO
@@ -15,6 +16,19 @@ import json
 import datetime
 import time
 start = time.perf_counter()
+
+from services import CCTVService
+import threading
+
+cond = threading.Condition()
+STREAM = b''
+DETECTION_DATA = {}
+service = CCTVService(cond, STREAM, DETECTION_DATA)
+
+server = threading.Thread(target=cherrypy.quickstart, args=[service])
+server.start()
+print("START DETECC")
+
 
 import cv2
 #capture cctv open link
@@ -45,7 +59,7 @@ from utils import visualization_utils as vis_util
 # In[4]:
 
 # What model to download.
-MODEL_NAME = 'ssd_mobilenet_v1_coco_11_06_2017'
+MODEL_NAME = 'ssd_mobilenet_v1_coco_2017_11_17'
 MODEL_FILE = MODEL_NAME + '.tar.gz'
 DOWNLOAD_BASE = 'http://download.tensorflow.org/models/object_detection/'
 
@@ -122,8 +136,10 @@ TEST_IMAGE_PATHS = [ os.path.join(PATH_TO_TEST_IMAGES_DIR, 'image{}.jpg'.format(
 IMAGE_SIZE = (12, 8)
 
 
+
 # In[10]:
 
+once = True
 with detection_graph.as_default():
   with tf.Session(graph=detection_graph) as sess:
     while True:
@@ -179,9 +195,22 @@ with detection_graph.as_default():
         cv2.putText(image_np,"Detected Person: " + str(len(s_class)), (10, 35), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0,0,255),2,cv2.FONT_HERSHEY_SIMPLEX)
       else:
         cv2.putText(image_np,"Detected Object: " + str(len(s_class)), (10, 35), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0,0,255),2,cv2.FONT_HERSHEY_SIMPLEX)
-         
       
-      cv2.imshow('object detection', cv2.resize(image_np, (800,600)))
-      if cv2.waitKey(25) & 0xFF == ord('q'):
-        cv2.destroyAllWindows()
-        break
+      cv2.resize(image_np, (800,600))
+      service.data = data
+      _, jpeg_bytes_tmp = cv2.imencode('.jpg', image_np) # to jpeg
+      service.jpeg_bytes = jpeg_bytes_tmp.tobytes()
+      
+      cond.acquire()
+      cond.notifyAll()
+      cond.release()
+      
+      print("Incoming image..")
+      if once:
+        with open("C:\\Users\\keenan\\image.jpeg", "bw") as img:
+            img.write(jpeg_bytes_tmp.tobytes())
+            once = False
+      #cv2.imshow('object detection', image_np)
+      #if cv2.waitKey(25) & 0xFF == ord('q'):
+      #  cv2.destroyAllWindows()
+      #  break

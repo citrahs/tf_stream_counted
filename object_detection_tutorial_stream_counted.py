@@ -8,6 +8,17 @@ import cv2
 
 from services import CCTVService
 
+def detection_histogram(scores, classes, category_index):
+    i = 0
+    result = {}
+    while(scores[i]>0.4 and i < scores.size):
+        try:
+            result[ category_index[classes[i]]["name"] ] = result[ category_index[classes[i]]["name"] ] + 1
+        except KeyError:
+            result[ category_index[classes[i]]["name"] ] = 1
+        i = i + 1
+    return result
+
 def main():
     # Start Web Service
     cond = threading.Condition()
@@ -67,26 +78,7 @@ def main():
                     category_index,
                     use_normalized_coordinates=True,
                     line_thickness=2)
-                # yang ini buat count objectnya
-                # 1: person, 2: bicycle, 3: car, 4: motorcycle, 6: bus, 8: truck
-                data = {}  
-                data['vessel'] = []
-                s_class = classes[scores > 0.5]
-                # print(str(len(s_class))+ ' object')
-                # for i in range(len(s_class)): print(category_index.get(s_class[i])['name'])
-                if(len(s_class)!=0 and s_class[0] == 3):
-                    cv2.putText(image_np,"Detected Car: " + str(len(s_class)), (10, 35), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0,0,255),2,cv2.FONT_HERSHEY_SIMPLEX)
-                    # save output to json
-                    data['vessel'].append({  
-                        'id': 3,
-                        'object': 'car',
-                        'sum': str(len(s_class))
-                    })
-                elif(len(s_class)!=0 and s_class[0] == 1):
-                    cv2.putText(image_np,"Detected Person: " + str(len(s_class)), (10, 35), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0,0,255),2,cv2.FONT_HERSHEY_SIMPLEX)
-                else:
-                    cv2.putText(image_np,"Detected Object: " + str(len(s_class)), (10, 35), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0,0,255),2,cv2.FONT_HERSHEY_SIMPLEX)
-                cv2.resize(image_np, (800,600))
+                data = detection_histogram(np.squeeze(scores), np.squeeze(classes).astype(np.int32), category_index)
                 service.data = data
                 _, jpeg_bytes_tmp = cv2.imencode('.jpg', image_np) # to jpeg
                 service.jpeg_bytes = jpeg_bytes_tmp.tobytes()

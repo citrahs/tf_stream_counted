@@ -31,7 +31,6 @@ def main():
     PATH_TO_MODELS = os.path.join("..","models")
     sys.path.append(os.path.join(sys.path[0], PATH_TO_MODELS, "research"))
     sys.path.append(os.path.join(sys.path[0], PATH_TO_MODELS, "research", "object_detection"))
-    print(sys.path)
     
     from utils import label_map_util
     from utils import visualization_utils as vis_util
@@ -52,7 +51,6 @@ def main():
     label_map = label_map_util.load_labelmap(PATH_TO_LABELS)
     categories = label_map_util.convert_label_map_to_categories(label_map, max_num_classes=NUM_CLASSES, use_display_name=True)
     category_index = label_map_util.create_category_index(categories)
-    print(category_index)
     cap = cv2.VideoCapture(sys.argv[1])
 
     with detection_graph.as_default():
@@ -80,7 +78,7 @@ def main():
                     line_thickness=2,
                     min_score_thresh=.4)
                 data = detection_histogram(np.squeeze(scores), np.squeeze(classes).astype(np.int32), category_index)
-                service.data = data
+                service.data = {"streamInfo":{"OBJECTID":"","name":"", "address":"", "ip_source":"", "ip_detection":"", "lon":0.0, "lat":0.0}, "data":data}
                 _, jpeg_bytes_tmp = cv2.imencode('.jpg', image_np) # to jpeg
                 service.jpeg_bytes = jpeg_bytes_tmp.tobytes()
                 

@@ -1,12 +1,5 @@
-import numpy as np
-import tensorflow as tf
-import os
 import sys
-import cherrypy
-import threading
-import cv2
-
-from services import CCTVService
+import os
 
 def detection_histogram(scores, classes, category_index):
     i = 0
@@ -20,11 +13,32 @@ def detection_histogram(scores, classes, category_index):
     return result
 
 def main():
+    import numpy as np
+    import tensorflow as tf
+    import cherrypy
+    import threading
+    import cv2
+
+    from services import CCTVService
+
+    BIND_ADDRESS = sys.argv[1]
+    BIND_PORT = int(sys.argv[2])
+    EXTERNAL_ADDRESS = BIND_ADDRESS if sys.argv[3] == "0" else sys.argv[3]
+    EXTERNAL_PORT = BIND_PORT if sys.argv[4] == "0" else sys.argv[4]
+    VIDEO_STREAM_SOURCE_URL = sys.argv[5]
+    OBJECTID = int(sys.argv[6])
+    CCTV_NAME = sys.argv[7]
+    CCTV_ADDRESS =  sys.argv[8]
+    VIDEO_STREAM_DETECTION_URL = EXTERNAL_ADDRESS+":"+str(EXTERNAL_PORT)+"/stream"
+    CCTV_HEIGHT = int(sys.argv[9])
+    CCTV_LON = float(sys.argv[10])
+    CCTV_LAT = float(sys.argv[11])
+    
     # Start Web Service
     cond = threading.Condition()
     service = CCTVService(cond, b'', {})
-    cherrypy.server.socket_host = sys.argv[2]
-    cherrypy.server.socket_port = int(sys.argv[3])
+    cherrypy.server.socket_host = BIND_ADDRESS
+    cherrypy.server.socket_port = BIND_PORT
     server = threading.Thread(target=cherrypy.quickstart, args=[service])
     server.start()
 
@@ -51,7 +65,7 @@ def main():
     label_map = label_map_util.load_labelmap(PATH_TO_LABELS)
     categories = label_map_util.convert_label_map_to_categories(label_map, max_num_classes=NUM_CLASSES, use_display_name=True)
     category_index = label_map_util.create_category_index(categories)
-    cap = cv2.VideoCapture(sys.argv[1])
+    cap = cv2.VideoCapture(VIDEO_STREAM_SOURCE_URL)
 
     with detection_graph.as_default():
         with tf.Session(graph=detection_graph) as sess:
@@ -78,7 +92,7 @@ def main():
                     line_thickness=2,
                     min_score_thresh=.4)
                 data = detection_histogram(np.squeeze(scores), np.squeeze(classes).astype(np.int32), category_index)
-                service.data = {"streamInfo":{"OBJECTID":"","name":"", "address":"", "ip_source":"", "ip_detection":"", "lon":0.0, "lat":0.0}, "data":data}
+                service.data = {"geometry":{"x":CCTV_LON, "y":CCTV_LAT},"attributes": {**{"OBJECTID":OBJECTID,"name":CCTV_NAME, "address":CCTV_ADDRESS, "source_url":VIDEO_STREAM_SOURCE_URL, "ip_detection":VIDEO_STREAM_DETECTION_URL}, **data}}
                 _, jpeg_bytes_tmp = cv2.imencode('.jpg', image_np) # to jpeg
                 service.jpeg_bytes = jpeg_bytes_tmp.tobytes()
                 
@@ -87,10 +101,22 @@ def main():
                 cond.release()
 
 if __name__ == "__main__":
-    if len(sys.argv) < 4:
-        print("Usage:\r\n  python object_detection_tutorial_stream_counted.py <NETWORK_CCTV_ADDRESS> <bind_address> <bind_port>")
-        sys.exit(1) 
+    if len(sys.argv) != 12:
+        print("Usage:\r\n  python object_detection_tutorial_stream_counted.py "+
+            "<BIND_ADDRESS> <BIND_PORT> <EXTERNAL_ADDRESS> <EXTERNAL_PORT> <VIDEO_STREAM_SOURCE_URL> "+
+            "<OBJECTID> <CCTV_NAME> <CCTV_ADDRESS> <CCTV_HEIGHT> <CCTV_LON> <CCTV_LAT>")
+        sys.exit(1)
     main()
-   #param 1 camera cctv address 'http://114.110.17.6:8896/image.jpg?type=motion&camera=1'
-   #param 2 bind address
-   #param 3 bind port
+    # BIND_ADDRESS = sys.argv[1]
+    # BIND_PORT = int(sys.argv[2])
+    # EXTERNAL_ADDRESS = BIND_ADDRESS if sys.argv[3] == "0" else sys.argv[3]
+    # EXTERNAL_PORT = BIND_PORT if sys.argv[4] == "0" else sys.argv[4]
+    # VIDEO_STREAM_SOURCE_URL = sys.argv[5]
+    # OBJECTID = int(sys.argv[6])
+    # CCTV_NAME = sys.argv[7]
+    # CCTV_ADDRESS =  sys.argv[8]
+    # VIDEO_STREAM_DETECTION_URL = EXTERNAL_IP+":"+EXTERNAL_PORT+"/stream"
+    # CCTV_HEIGHT = int(sys.argv[9])
+    # CCTV_LAT = float(sys.argv[10])
+    # CCTV_LON = float(sys.argv[11])
+   

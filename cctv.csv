@@ -1,0 +1,12 @@
+172.27.100.181,9090,47.74.66.67,9090,http://114.110.17.6:8896/image.jpg?type=motion,9,Wisma Kosgoro,Jl. Mohammad Husni Thamrin,8,106.822998,-6.1908
+172.27.100.181,9091,47.74.66.67,9091,http://114.110.17.6:8921/JpegStream.cgi?username=bit&password=guest&channel=1,32,Stasiun Sudirman,"Jl Mohamad Husni Thamrin, Jakarta Pusat",8,106.822998,-6.202
+172.27.100.181,9092,47.74.66.67,9092,http://114.110.17.6:8920/JpegStream.cgi?username=bit&password=guest&channel=1,31,Patung Kuda,Jl. Medan Merdeka Barat Kel. Gambir Kec. Gambir Jakarta Pusat,8,106.82283,-6.1798
+172.27.100.181,9093,47.74.66.67,9093,http://114.110.17.6:8897/image.jpg?type=motion&camera=1,10,Central Senayan,Jl Asia Afrika,8,106.798302,-6.2236
+172.27.100.181,9094,47.74.66.67,9094,http://114.110.17.6:8899/image.jpg?type=motion&camera=1,12,TVRI,Jl Gerbang Pemuda (Depan TVRI),6,106.8,-6.2138
+172.27.100.181,9095,47.74.66.67,9095,http://114.110.17.6:8917/image.jpg?type=motion&camera=1,61,Monas Merdeka Selatan 02,Jl Medan Merdeka Selatan,8,106.793513,-6.27877
+172.27.100.181,9096,47.74.66.67,9096,http://202.51.112.91:686/mjpg/video.mjpg,1,Patra Kuningan S Dishub DKI Jakarta,Jl. HR Rasuna Said,6,106.831406,-6.233374
+172.27.100.181,9097,47.74.66.67,9097,http://202.51.112.91:687/mjpg/video.mjpg,2,Depkes N Dishub DKI,Jl. HR Rasuna Said,8,106.833195,-6.228541
+172.27.100.181,9098,47.74.66.67,9098,http://202.51.112.91:692/mjpg/video.mjpg,3,Karet Kuningan N,Jl. HR Rasuna Said,8,106.830903,-6.217396
+172.27.100.181,9099,47.74.66.67,9099,http://202.51.112.91:691/mjpg/video.mjpg,4,06.14 - Karet Kuningan S,Jl. HR Rasuna Said,8,106.830903,-6.217396
+172.27.100.181,9100,47.74.66.67,9100,http://202.51.120.174:8087/zm/cgi-bin/nph-zms?mode=jpeg&monitor=12&scale=100&maxfps=30&buffer=1000&user=jsc&pass=jakarta,5,Antrian Penumpang BUNDARAN SENAYAN,Jl. Jend. Sudirman,8,106.801037,-6.227848
+172.27.100.181,9101,47.74.66.67,9101,http://114.110.17.6:8951/JpegStream.cgi?username=bit&password=guest&channel=1,64,CCTV MCP Antasari,Jl. Antasari,8,106.8065994,-6.288801

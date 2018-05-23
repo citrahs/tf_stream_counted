@@ -2,6 +2,7 @@ import cherrypy, requests, json, time
 
 template = {}
 INTERNAL_FEATURE_ADDRESS = [ 
+    "172.27.100.181:9090/stream",
     "172.27.100.181:9091/stream",
     "172.27.100.181:9092/stream",
     "172.27.100.181:9093/stream",
@@ -10,7 +11,9 @@ INTERNAL_FEATURE_ADDRESS = [
     "172.27.100.181:9096/stream",
     "172.27.100.181:9097/stream",
     "172.27.100.181:9098/stream",
-    "172.27.100.181:9099/stream"
+    "172.27.100.181:9099/stream",
+    "172.27.100.181:9100/stream",
+    "172.27.100.181:9101/stream"
 ]
 
 class FeatureProxy(object):

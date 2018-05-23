@@ -29,7 +29,7 @@ def main():
     OBJECTID = int(sys.argv[6])
     CCTV_NAME = sys.argv[7]
     CCTV_ADDRESS =  sys.argv[8]
-    VIDEO_STREAM_DETECTION_URL = EXTERNAL_ADDRESS+":"+str(EXTERNAL_PORT)+"/stream"
+    VIDEO_STREAM_DETECTION_URL = "http://"+EXTERNAL_ADDRESS+":"+str(EXTERNAL_PORT)+"/stream"
     CCTV_HEIGHT = int(sys.argv[9])
     CCTV_LON = float(sys.argv[10])
     CCTV_LAT = float(sys.argv[11])

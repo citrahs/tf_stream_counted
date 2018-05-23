@@ -107,16 +107,3 @@ if __name__ == "__main__":
             "<OBJECTID> <CCTV_NAME> <CCTV_ADDRESS> <CCTV_HEIGHT> <CCTV_LON> <CCTV_LAT>")
         sys.exit(1)
     main()
-    # BIND_ADDRESS = sys.argv[1]
-    # BIND_PORT = int(sys.argv[2])
-    # EXTERNAL_ADDRESS = BIND_ADDRESS if sys.argv[3] == "0" else sys.argv[3]
-    # EXTERNAL_PORT = BIND_PORT if sys.argv[4] == "0" else sys.argv[4]
-    # VIDEO_STREAM_SOURCE_URL = sys.argv[5]
-    # OBJECTID = int(sys.argv[6])
-    # CCTV_NAME = sys.argv[7]
-    # CCTV_ADDRESS =  sys.argv[8]
-    # VIDEO_STREAM_DETECTION_URL = EXTERNAL_IP+":"+EXTERNAL_PORT+"/stream"
-    # CCTV_HEIGHT = int(sys.argv[9])
-    # CCTV_LAT = float(sys.argv[10])
-    # CCTV_LON = float(sys.argv[11])
-   

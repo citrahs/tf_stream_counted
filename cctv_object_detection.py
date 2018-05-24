@@ -92,7 +92,7 @@ def main():
                     line_thickness=2,
                     min_score_thresh=.4)
                 data = detection_histogram(np.squeeze(scores), np.squeeze(classes).astype(np.int32), category_index)
-                service.data = {"geometry":{"x":CCTV_LON, "y":CCTV_LAT},"attributes": {**{"OBJECTID":OBJECTID,"name":CCTV_NAME, "address":CCTV_ADDRESS, "source_url":VIDEO_STREAM_SOURCE_URL, "ip_detection":VIDEO_STREAM_DETECTION_URL}, **data}}
+                service.data = {**{"x":CCTV_LON, "y":CCTV_LAT, "OBJECTID":OBJECTID,"name":CCTV_NAME, "address":CCTV_ADDRESS, "source_url":VIDEO_STREAM_SOURCE_URL, "ip_detection":VIDEO_STREAM_DETECTION_URL}, **data}}
                 _, jpeg_bytes_tmp = cv2.imencode('.jpg', image_np) # to jpeg
                 service.jpeg_bytes = jpeg_bytes_tmp.tobytes()
                 

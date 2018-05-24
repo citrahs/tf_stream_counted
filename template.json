@@ -1,0 +1,34 @@
+{
+    "displayFieldName": "name",
+    "fieldAliases": 
+        { "OBJECTID": "OBJECTID",
+          "name": "CCTV Name",
+          "address": "CCTV Address",
+          "source_url": "Source Stream",
+          "ip_detection": "Detection Stream",
+          "person": "Person",
+          "bicycle": "Bicycle",
+          "car": "Car",
+          "motorcycle": "Motorcycle",
+          "bus": "Bus",
+          "train": "Train",
+          "truck": "Truck"
+        },
+    "geometryType": "esriGeometryPoint",
+    "spatialReference":{"wkid":4326},
+    "fields":[
+        {"name":"OBJECTID","type":"esriFieldTypeOID","alias":"OBJECTID"},
+        {"name":"name","type":"esriFieldTypeString","alias":"CCTV Name"},
+        {"name":"address","type":"esriFieldTypeString","alias":"CCTV Address","length":64},
+        {"name":"source_url","type":"esriFieldTypeString","alias":"Source Stream","length":64},
+        {"name":"ip_detection","type":"esriFieldTypeString","alias":"Detection Stream","length":64},
+        {"name":"person", "type":"esriFieldTypeInteger","alias":"Person"},
+        {"name":"bicycle","type":"esriFieldTypeInteger","alias":"Bicycle"},
+        {"name":"car","type":"esriFieldTypeInteger","alias":"Car"},
+        {"name":"motorcycle","type":"esriFieldTypeInteger","alias":"Motorcycle"},
+        {"name":"bus", "type":"esriFieldTypeInteger","alias":"Bus"},
+        {"name":"train","type":"esriFieldTypeInteger","alias":"Train"},
+        {"name":"truck","type":"esriFieldTypeInteger","alias":"Truck"}
+    ],
+    "features":[]
+}

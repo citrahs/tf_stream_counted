@@ -1,4 +1,4 @@
-import cherrypy, requests, json, time
+import cherrypy, requests, json, time, copy
 
 template = {}
 INTERNAL_FEATURE_ADDRESS = [ 
@@ -19,22 +19,21 @@ INTERNAL_FEATURE_ADDRESS = [
 class FeatureProxy(object):
     def index(self):
         """ Return a Esri JSON Feature """
+        template_copy = []
         for feature in INTERNAL_FEATURE_ADDRESS:
             fjson = {}
             try:
                 req = requests.get(feature, timeout=0.0007)
                 fjson = req.json()
                 if len(fjson)>0:
-                    template["features"].append(fjson)
+                    template_copy["features"].append(fjson)
             except:
                 print("exceptione")
                 pass
-        return json.dumps(template)
+        return json.dumps(template_copy)
     index.exposed = True
     
 if __name__ == "__main__":
-    with open("template.json", "r") as file:
-        template = json.load(file)
     cherrypy.server.socket_host = "172.27.100.181"
     cherrypy.server.socket_port = 8080
     cherrypy.quickstart(FeatureProxy())
